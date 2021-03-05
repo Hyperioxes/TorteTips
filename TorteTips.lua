@@ -88,7 +88,7 @@ local function SendAlert(time,staysFor)
 end
 
 local function UpdateEveryMinute()
-	local remainingTime = GetUnitInfo({147687},"player")
+	local remainingTime = GetUnitInfo({147687,147733,147734},"player")
 	if remainingTime < 300 then
 		SendAlert(remainingTime,5000)
 	end
@@ -124,6 +124,8 @@ function OnAddOnLoaded(event, addonName)
 	if remainingTime ~= 0 then -- if torte is active
 		EVENT_MANAGER:RegisterForUpdate("TTUpdate", 60000,UpdateEveryMinute) -- check torte's duration every minute
 	end
+
+	-- 50% TORTE
 	EVENT_MANAGER:RegisterForEvent("TorteEffect",EVENT_EFFECT_CHANGED, function(_,_,_,_,_,_,expireTime) -- event that gets called when torte starts or expires
 	if expireTime==0 then -- if torte expires
 		SendAlert(0,30000) -- show alert for 30 seconds
@@ -136,12 +138,40 @@ function OnAddOnLoaded(event, addonName)
 	EVENT_MANAGER:AddFilterForEvent("TorteEffect", EVENT_EFFECT_CHANGED, REGISTER_FILTER_SOURCE_COMBAT_UNIT_TYPE ,1)
 
 
+	-- 100% TORTE
+	EVENT_MANAGER:RegisterForEvent("TorteEffect2",EVENT_EFFECT_CHANGED, function(_,_,_,_,_,_,expireTime) -- event that gets called when torte starts or expires
+	if expireTime==0 then -- if torte expires
+		SendAlert(0,30000) -- show alert for 30 seconds
+		EVENT_MANAGER:UnregisterForUpdate("TTUpdate", 60000) -- stop checking torte every minute
+	else -- if torte starts
+		EVENT_MANAGER:RegisterForUpdate("TTUpdate", 60000,UpdateEveryMinute) -- start checking torte every minute
+	end
+	end)
+	EVENT_MANAGER:AddFilterForEvent("TorteEffect2", EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID,147687)
+	EVENT_MANAGER:AddFilterForEvent("TorteEffect2", EVENT_EFFECT_CHANGED, REGISTER_FILTER_SOURCE_COMBAT_UNIT_TYPE ,1)
+
+
+
+
+	-- 150% TORTE
+	EVENT_MANAGER:RegisterForEvent("TorteEffect3",EVENT_EFFECT_CHANGED, function(_,_,_,_,_,_,expireTime) -- event that gets called when torte starts or expires
+	if expireTime==0 then -- if torte expires
+		SendAlert(0,30000) -- show alert for 30 seconds
+		EVENT_MANAGER:UnregisterForUpdate("TTUpdate", 60000) -- stop checking torte every minute
+	else -- if torte starts
+		EVENT_MANAGER:RegisterForUpdate("TTUpdate", 60000,UpdateEveryMinute) -- start checking torte every minute
+	end
+	end)
+	EVENT_MANAGER:AddFilterForEvent("TorteEffect3", EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID,147687)
+	EVENT_MANAGER:AddFilterForEvent("TorteEffect3", EVENT_EFFECT_CHANGED, REGISTER_FILTER_SOURCE_COMBAT_UNIT_TYPE ,1)
+
+
 
 
 
 end
 EVENT_MANAGER:RegisterForEvent(TT.name, EVENT_ADD_ON_LOADED, OnAddOnLoaded)
 CALLBACK_MANAGER:RegisterCallback("OnWorldMapChanged", function() -- on map change
-	local remainingTime = GetUnitInfo({147687},"player")
-	zo_callLater(function () SendAlert(remainingTime,10000) end, 5000) -- when game loads in wait 5 seconds then show alert for 10 seconds
+	local remainingTime = GetUnitInfo({147687,147733,147734},"player")
+	zo_callLater(function () SendAlert(remainingTime,15000) end, 5000) -- when game loads in wait 5 seconds then show alert for 10 seconds
 end)
