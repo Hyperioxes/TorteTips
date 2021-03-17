@@ -117,7 +117,7 @@ function OnAddOnLoaded(event, addonName)
 
 
 	InitializeUI()
-	local remainingTime = GetUnitInfo({147687},"player")
+	local remainingTime = GetUnitInfo({147687,147733,147734},"player")
 	if remainingTime < 300 then -- on startup, if torte buff is shorter than 5 minutes
 		zo_callLater(function () SendAlert(remainingTime,10000) end, 5000) -- when game loads in wait 5 seconds then show alert for 10 seconds
 	end
@@ -131,6 +131,7 @@ function OnAddOnLoaded(event, addonName)
 		SendAlert(0,30000) -- show alert for 30 seconds
 		EVENT_MANAGER:UnregisterForUpdate("TTUpdate", 60000) -- stop checking torte every minute
 	else -- if torte starts
+		TorteTipsUI:SetHidden(true)
 		EVENT_MANAGER:RegisterForUpdate("TTUpdate", 60000,UpdateEveryMinute) -- start checking torte every minute
 	end
 	end)
@@ -144,10 +145,11 @@ function OnAddOnLoaded(event, addonName)
 		SendAlert(0,30000) -- show alert for 30 seconds
 		EVENT_MANAGER:UnregisterForUpdate("TTUpdate", 60000) -- stop checking torte every minute
 	else -- if torte starts
+		TorteTipsUI:SetHidden(true)
 		EVENT_MANAGER:RegisterForUpdate("TTUpdate", 60000,UpdateEveryMinute) -- start checking torte every minute
 	end
 	end)
-	EVENT_MANAGER:AddFilterForEvent("TorteEffect2", EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID,147687)
+	EVENT_MANAGER:AddFilterForEvent("TorteEffect2", EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID,147733)
 	EVENT_MANAGER:AddFilterForEvent("TorteEffect2", EVENT_EFFECT_CHANGED, REGISTER_FILTER_SOURCE_COMBAT_UNIT_TYPE ,1)
 
 
@@ -159,10 +161,11 @@ function OnAddOnLoaded(event, addonName)
 		SendAlert(0,30000) -- show alert for 30 seconds
 		EVENT_MANAGER:UnregisterForUpdate("TTUpdate", 60000) -- stop checking torte every minute
 	else -- if torte starts
+		TorteTipsUI:SetHidden(true)
 		EVENT_MANAGER:RegisterForUpdate("TTUpdate", 60000,UpdateEveryMinute) -- start checking torte every minute
 	end
 	end)
-	EVENT_MANAGER:AddFilterForEvent("TorteEffect3", EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID,147687)
+	EVENT_MANAGER:AddFilterForEvent("TorteEffect3", EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID,147734)
 	EVENT_MANAGER:AddFilterForEvent("TorteEffect3", EVENT_EFFECT_CHANGED, REGISTER_FILTER_SOURCE_COMBAT_UNIT_TYPE ,1)
 
 
@@ -173,5 +176,8 @@ end
 EVENT_MANAGER:RegisterForEvent(TT.name, EVENT_ADD_ON_LOADED, OnAddOnLoaded)
 CALLBACK_MANAGER:RegisterCallback("OnWorldMapChanged", function() -- on map change
 	local remainingTime = GetUnitInfo({147687,147733,147734},"player")
-	zo_callLater(function () SendAlert(remainingTime,15000) end, 5000) -- when game loads in wait 5 seconds then show alert for 10 seconds
+	remainingTime = 450
+	if remainingTime < 600 then -- if torte buff is shorter than 10 minutes
+		zo_callLater(function () SendAlert(remainingTime,15000) end, 5000) -- when game loads in wait 5 seconds then show alert for 10 seconds
+	end
 end)
